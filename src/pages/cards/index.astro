@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const cards = await getCollection('cards');
+const sorted = cards.sort((a, b) => a.data.number - b.data.number);
+---
+
+<Base title="Card Index">
+  <h1>Silicon Oracle</h1>
+  <p class="subtitle">33 cards from the vocabulary of computation, revealed as archetypes.</p>
+  
+  <div class="card-list">
+    {sorted.map((card) => (
+      <a href={`./${card.slug}`} class="card-item">
+        <span class="number">{card.data.number}</span>
+        <span class="name">{card.data.name}</span>
+        <span class="keywords">{card.data.keywords.join(' · ')}</span>
+      </a>
+    ))}
+  </div>
+  
+  <div class="meta">
+    <a href="./index.md">Raw Markdown Index</a>
+  </div>
+</Base>
+
+<style>
+  .subtitle {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 2rem;
+  }
+  .card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .card-item {
+    display: grid;
+    grid-template-columns: 2rem 10rem 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-card);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: background 0.2s;
+  }
+  .card-item:hover {
+    background: var(--border-light);
+  }
+  .number {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  .name {
+    font-weight: 500;
+  }
+  .keywords {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+  .meta {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+  }
+</style>
