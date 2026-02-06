@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export async function getStaticPaths() {
   const cards = await getCollection('cards');
@@ -18,6 +20,11 @@ const sorted = allCards.sort((a, b) => a.data.number - b.data.number);
 const currentIndex = sorted.findIndex((c) => c.slug === entry.slug);
 const prevCard = currentIndex > 0 ? sorted[currentIndex - 1] : null;
 const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
+
+// Check if card image exists
+const imagePath = path.join(process.cwd(), 'public', 'cards', `${entry.slug}.png`);
+const hasImage = fs.existsSync(imagePath);
+const imageUrl = `${import.meta.env.BASE_URL}/cards/${entry.slug}.png`;
 ---
 
 <Base title={entry.data.name}>
@@ -29,14 +36,20 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
     <div class="card-layout">
       <!-- Card Image Column -->
       <aside class="card-image-column">
-        <div class="card-image-placeholder">
-          <div class="card-frame">
-            <span class="card-number-badge">{entry.data.number}</span>
-            <div class="card-glyph">◇</div>
-            <span class="card-name-label">{entry.data.name}</span>
+        {hasImage ? (
+          <div class="card-image">
+            <img src={imageUrl} alt={`${entry.data.name} - Oracle card illustration`} />
           </div>
-        </div>
-        <p class="image-hint">Card art coming soon</p>
+        ) : (
+          <div class="card-image-placeholder">
+            <div class="card-frame">
+              <span class="card-number-badge">{entry.data.number}</span>
+              <div class="card-glyph">◇</div>
+              <span class="card-name-label">{entry.data.name}</span>
+            </div>
+          </div>
+        )}
+        {!hasImage && <p class="image-hint">Card art coming soon</p>}
       </aside>
       
       <!-- Content Column -->
@@ -117,6 +130,20 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
   .card-image-column {
     position: sticky;
     top: var(--space-md);
+  }
+  
+  .card-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .card-image img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
   
   .card-image-placeholder {
