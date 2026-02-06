@@ -7,133 +7,228 @@ const sorted = cards.sort((a, b) => a.data.number - b.data.number);
 
 // Group cards by category
 const categories = [
-  { name: 'Foundation', range: [1, 8] },
-  { name: 'Category Theory', range: [9, 15] },
-  { name: 'Machine Learning', range: [16, 22] },
-  { name: 'Systems', range: [23, 33] },
+  { name: 'Foundation', range: [1, 8], description: 'Core computational concepts' },
+  { name: 'Category Theory', range: [9, 15], description: 'Structures and morphisms' },
+  { name: 'Machine Learning', range: [16, 22], description: 'Patterns of learning' },
+  { name: 'Systems', range: [23, 33], description: 'Architectures and emergence' },
 ];
+
+// Pre-compute cards for each category
+const categoryData = categories.map((cat) => ({
+  ...cat,
+  cards: sorted.filter((c) => c.data.number >= cat.range[0] && c.data.number <= cat.range[1]),
+}));
 ---
 
 <Base title="All Cards">
-  <header>
-    <a href="../" class="back">← Silicon Oracle</a>
-    <h1>The Cards</h1>
-    <p class="subtitle">33 archetypes from the vocabulary of computation</p>
-  </header>
-  
-  <hr />
-  
-  {categories.map((category) => {
-    const categoryCards = sorted.filter(
-      (c) => c.data.number >= category.range[0] && c.data.number <= category.range[1]
-    );
-    return (
-      <section class="category">
-        <h2>{category.name}</h2>
-        <div class="card-grid">
-          {categoryCards.map((card) => (
-            <a href={`./${card.slug}`} class="card-item">
-              <span class="number">{card.data.number}</span>
-              <span class="name">{card.data.name}</span>
-              <span class="keywords">{card.data.keywords.join(' · ')}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    );
-  })}
-  
-  <footer class="meta">
-    <a href="./index.md">Raw Markdown Index</a>
-  </footer>
+  <div class="cards-page">
+    <header class="page-header">
+      <nav class="breadcrumb">
+        <a href="../">← Silicon Oracle</a>
+      </nav>
+      <h1>The Cards</h1>
+      <p class="subtitle">33 archetypes from the vocabulary of computation</p>
+    </header>
+    
+    <div class="categories">
+      {categoryData.map((category) => (
+          <section class="category">
+            <header class="category-header">
+              <h2>{category.name}</h2>
+              <span class="category-desc">{category.description}</span>
+            </header>
+            <div class="card-grid">
+              {category.cards.map((card) => (
+                <a href={`./${card.slug}`} class="card-item">
+                  <div class="card-number">{card.data.number}</div>
+                  <div class="card-info">
+                    <span class="card-name">{card.data.name}</span>
+                    <span class="card-keywords">{card.data.keywords.join(' · ')}</span>
+                  </div>
+                  <span class="card-arrow">→</span>
+                </a>
+              ))}
+            </div>
+          </section>
+      ))}
+    </div>
+    
+    <footer class="page-footer">
+      <a href="./index.md">View Raw Markdown Index</a>
+    </footer>
+  </div>
 </Base>
 
 <style>
-  header {
-    margin-bottom: var(--space-md);
+  .cards-page {
+    max-width: 800px;
+    margin: 0 auto;
   }
   
-  .back {
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-light);
+  }
+  
+  .breadcrumb {
+    margin-bottom: var(--space-sm);
+  }
+  
+  .breadcrumb a {
     font-size: 0.8rem;
     color: var(--text-muted);
     text-decoration: none;
   }
   
-  .back:hover {
+  .breadcrumb a:hover {
     color: var(--accent-warm);
   }
   
-  h1 {
-    margin-top: var(--space-sm);
+  .page-header h1 {
+    font-size: 3rem;
+    margin-bottom: var(--space-xs);
   }
   
   .subtitle {
     font-family: var(--font-heading);
+    font-size: 1.2rem;
     font-style: italic;
     color: var(--text-secondary);
     margin: 0;
   }
   
-  .category {
-    margin-bottom: var(--space-lg);
+  .categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
   }
   
-  .category h2 {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    font-weight: 400;
+  .category-header {
     margin-bottom: var(--space-sm);
-    margin-top: var(--space-md);
+    padding-bottom: var(--space-xs);
+  }
+  
+  .category-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+  }
+  
+  .category-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
   }
   
   .card-grid {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
   
   .card-item {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    grid-template-rows: auto auto;
-    gap: 0 var(--space-sm);
-    padding: var(--space-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
     background: var(--bg-card);
     text-decoration: none;
     color: var(--text-primary);
-    transition: background 0.15s;
+    border-radius: 8px;
+    transition: all 0.15s;
   }
   
   .card-item:hover {
     background: var(--border-light);
+    transform: translateX(4px);
   }
   
-  .number {
-    grid-row: span 2;
+  .card-item:hover .card-arrow {
+    color: var(--accent-warm);
+    transform: translateX(4px);
+  }
+  
+  .card-number {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
-    color: var(--text-muted);
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--accent-warm);
+    opacity: 0.7;
+    width: 2.5rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  .card-info {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
   }
   
-  .name {
+  .card-name {
     font-family: var(--font-heading);
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 500;
   }
   
-  .keywords {
+  .card-keywords {
     font-size: 0.75rem;
     color: var(--text-secondary);
     font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
-  .meta {
+  .card-arrow {
+    color: var(--text-muted);
+    font-size: 1rem;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  
+  .page-footer {
     text-align: center;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-light);
+  }
+  
+  .page-footer a {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  
+  .page-footer a:hover {
+    color: var(--accent-warm);
+  }
+  
+  @media (max-width: 640px) {
+    .page-header h1 {
+      font-size: 2.25rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+    }
+    
+    .card-item {
+      padding: var(--space-sm);
+    }
+    
+    .card-number {
+      font-size: 1.5rem;
+      width: 2rem;
+    }
+    
+    .card-name {
+      font-size: 1.1rem;
+    }
   }
 </style>
