@@ -9,7 +9,7 @@ export const GET: APIRoute = async () => {
   const lines = [
     '# Silicon Oracle — Card Index',
     '',
-    '*33 cards from the vocabulary of computation, revealed as archetypes.*',
+    '*New archetypes, ancient patterns.*',
     '',
     '---',
     '',

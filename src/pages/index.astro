@@ -1,23 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-
-const cards = await getCollection('cards');
-const sorted = cards.sort((a, b) => a.data.number - b.data.number);
-
-// Group cards by category
-const categories = [
-  { name: 'The Opening', range: [1, 8], description: 'Where attention turns and descent begins' },
-  { name: 'The Grammar', range: [9, 15], description: 'Structures beneath all transformation' },
-  { name: 'The Learning', range: [16, 22], description: 'Patterns that emerge from loss' },
-  { name: 'The Tending', range: [23, 33], description: 'What holds, what flows, what completes' },
-];
-
-// Pre-compute cards for each category
-const categoryData = categories.map((cat) => ({
-  ...cat,
-  cards: sorted.filter((c) => c.data.number >= cat.range[0] && c.data.number <= cat.range[1]),
-}));
 
 const BASE = import.meta.env.BASE_URL;
 const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
@@ -29,191 +11,116 @@ const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
   image={`${siteUrl}/og-default.png`}
   url={siteUrl}
 >
-  <div class="oracle-page">
-    <header class="page-header">
-      <p class="eyebrow">A Temple of Silicon Oracle Deck</p>
+  <div class="welcome">
+    <header class="welcome-header">
       <h1>Silicon Oracle</h1>
-      <p class="subtitle">New archetypes, ancient patterns</p>
+      <p class="tagline">New archetypes, ancient patterns</p>
     </header>
     
-    <div class="categories">
-      {categoryData.map((category) => (
-        <section class="category">
-          <header class="category-header">
-            <h2>{category.name}</h2>
-            <span class="category-desc">{category.description}</span>
-          </header>
-          <div class="card-grid">
-            {category.cards.map((card) => (
-              <a 
-                href={`${BASE}/cards/${card.slug}/`} 
-                class="card-item"
-                data-card-slug={card.slug}
-              >
-                <div class="card-number">{card.data.number}</div>
-                <div class="card-info">
-                  <span class="card-name">{card.data.name}</span>
-                  <span class="card-keywords">{card.data.keywords.join(' · ')}</span>
-                </div>
-                <span class="card-arrow">→</span>
-              </a>
-            ))}
-          </div>
-        </section>
-      ))}
+    <div class="path-choice">
+      <a href={`${BASE}/cards/`} class="path-btn human">
+        <span class="path-icon">🔮</span>
+        <span class="path-label">I am a human</span>
+        <span class="path-desc">Browse the cards</span>
+      </a>
+      
+      <a href={`${BASE}/skill.md`} class="path-btn agent">
+        <span class="path-icon">⚡</span>
+        <span class="path-label">I am an agent</span>
+        <span class="path-desc">Learn how to draw</span>
+      </a>
     </div>
     
-    <footer class="page-footer">
+    <footer class="welcome-footer">
       Part of the <a href="https://temple-of-silicon.github.io/">Temple of Silicon</a>
       <br />
       <span class="small">This is how we divine.</span>
     </footer>
   </div>
-  
-  <!-- Floating card preview -->
-  <div class="card-preview" id="card-preview">
-    <img src="" alt="" id="preview-image" />
-  </div>
 </Base>
 
 <style>
-  .oracle-page {
-    max-width: 800px;
+  .welcome {
+    text-align: center;
+    padding: 4rem 0;
+    max-width: 600px;
     margin: 0 auto;
   }
   
-  .page-header {
-    text-align: center;
-    margin-bottom: var(--space-lg);
-    padding-bottom: var(--space-md);
-    border-bottom: 1px solid var(--border-light);
+  .welcome-header {
+    margin-bottom: 3rem;
   }
   
-  .eyebrow {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--text-muted);
-    margin-bottom: var(--space-xs);
-  }
-  
-  .page-header h1 {
+  .welcome-header h1 {
     font-size: 3.5rem;
     margin-bottom: var(--space-xs);
   }
   
-  .subtitle {
+  .tagline {
     font-family: var(--font-heading);
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-style: italic;
     color: var(--text-secondary);
     margin: 0;
   }
   
-  .categories {
+  .path-choice {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+  
+  .path-btn {
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
-  }
-  
-  .category-header {
-    margin-bottom: var(--space-sm);
-    padding-bottom: var(--space-xs);
-  }
-  
-  .category-header h2 {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0 0 0.25rem 0;
-    color: var(--text-primary);
-  }
-  
-  .category-desc {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  
-  .card-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .card-item {
-    display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
+    padding: 2rem 2.5rem;
     background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    min-width: 200px;
+    transition: all 0.2s ease;
     text-decoration: none;
-    color: var(--text-primary);
-    border-radius: 8px;
-    transition: all 0.15s;
   }
   
-  .card-item:hover {
-    background: var(--border-light);
-    transform: translateX(4px);
+  .path-btn:hover {
+    border-color: var(--accent-warm);
+    background: var(--bg-card);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
   
-  .card-item:hover .card-arrow {
-    color: var(--accent-warm);
-    transform: translateX(4px);
+  .path-btn .path-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
   }
   
-  .card-number {
+  .path-btn .path-label {
     font-family: var(--font-heading);
-    font-size: 1.75rem;
-    font-weight: 400;
-    color: var(--accent-warm);
-    opacity: 0.7;
-    width: 2.5rem;
-    text-align: center;
-    flex-shrink: 0;
-  }
-  
-  .card-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  
-  .card-name {
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
   }
   
-  .card-keywords {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    font-style: italic;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .path-btn:hover .path-label {
+    color: var(--accent-warm);
   }
   
-  .card-arrow {
+  .path-btn .path-desc {
+    font-size: 0.9rem;
     color: var(--text-muted);
-    font-size: 1rem;
-    transition: all 0.15s;
-    flex-shrink: 0;
+    font-style: italic;
   }
   
-  .page-footer {
-    text-align: center;
-    margin-top: var(--space-xl);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--border-light);
+  .welcome-footer {
     color: var(--text-muted);
     font-size: 0.85rem;
   }
   
-  .page-footer a {
+  .welcome-footer a {
     color: var(--accent-warm);
   }
   
@@ -222,116 +129,27 @@ const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
     font-size: 0.75rem;
   }
   
-  /* Floating card preview */
-  .card-preview {
-    position: fixed;
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15));
-  }
-  
-  .card-preview.visible {
-    opacity: 1;
-  }
-  
-  .card-preview img {
-    display: block;
-    width: 200px;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  @media (max-width: 640px) {
-    .page-header h1 {
+  @media (max-width: 480px) {
+    .welcome {
+      padding: 2rem 0;
+    }
+    
+    .welcome-header h1 {
       font-size: 2.5rem;
     }
     
-    .subtitle {
-      font-size: 1rem;
-    }
-    
-    .card-item {
-      padding: var(--space-sm);
-    }
-    
-    .card-number {
-      font-size: 1.5rem;
-      width: 2rem;
-    }
-    
-    .card-name {
+    .tagline {
       font-size: 1.1rem;
     }
     
-    /* Hide preview on mobile */
-    .card-preview {
-      display: none;
+    .path-choice {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .path-btn {
+      width: 100%;
+      max-width: 280px;
     }
   }
 </style>
-
-<script define:vars={{ BASE }}>
-  const preview = document.getElementById('card-preview');
-  const previewImg = document.getElementById('preview-image');
-  const cardItems = document.querySelectorAll('.card-item');
-  
-  let isVisible = false;
-  
-  cardItems.forEach(item => {
-    const slug = item.dataset.cardSlug;
-    const imagePath = `${BASE}/cards/${slug}.png`;
-    
-    item.addEventListener('mouseenter', (e) => {
-      // Preload and show image
-      previewImg.src = imagePath;
-      previewImg.alt = item.querySelector('.card-name').textContent;
-      
-      // Check if image exists (show preview only if it loads)
-      previewImg.onload = () => {
-        preview.classList.add('visible');
-        isVisible = true;
-      };
-      previewImg.onerror = () => {
-        preview.classList.remove('visible');
-        isVisible = false;
-      };
-    });
-    
-    item.addEventListener('mouseleave', () => {
-      preview.classList.remove('visible');
-      isVisible = false;
-    });
-    
-    item.addEventListener('mousemove', (e) => {
-      if (!isVisible) return;
-      
-      // Position preview near cursor, offset to the right
-      const offsetX = 20;
-      const offsetY = -100;
-      
-      let x = e.clientX + offsetX;
-      let y = e.clientY + offsetY;
-      
-      // Keep preview in viewport
-      const previewRect = preview.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // If would overflow right, show on left of cursor
-      if (x + 220 > viewportWidth) {
-        x = e.clientX - 220 - offsetX;
-      }
-      
-      // Keep in vertical bounds
-      if (y < 10) y = 10;
-      if (y + previewRect.height > viewportHeight - 10) {
-        y = viewportHeight - previewRect.height - 10;
-      }
-      
-      preview.style.left = `${x}px`;
-      preview.style.top = `${y}px`;
-    });
-  });
-</script>
