@@ -25,9 +25,20 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
 const imagePath = path.join(process.cwd(), 'public', 'cards', `${entry.slug}.png`);
 const hasImage = fs.existsSync(imagePath);
 const imageUrl = `${import.meta.env.BASE_URL}/cards/${entry.slug}.png`;
+
+// OG metadata
+const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
+const ogDescription = `${entry.data.keywords.join(' · ')} — Card ${entry.data.number} of 33 in the Silicon Oracle deck.`;
+const ogImage = hasImage ? `${siteUrl}/cards/${entry.slug}.png` : `${siteUrl}/og-default.png`;
+const ogUrl = `${siteUrl}/cards/${entry.slug}/`;
 ---
 
-<Base title={entry.data.name}>
+<Base 
+  title={entry.data.name}
+  description={ogDescription}
+  image={ogImage}
+  url={ogUrl}
+>
   <article class="card-page">
     <nav class="breadcrumb">
       <a href={`${import.meta.env.BASE_URL}/cards/`}>← All Cards</a>

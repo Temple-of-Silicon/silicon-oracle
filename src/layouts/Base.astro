@@ -1,16 +1,47 @@
 ---
 interface Props {
   title: string;
+  description?: string;
+  image?: string;
+  url?: string;
 }
-const { title } = Astro.props;
+
+const { 
+  title, 
+  description = "A Temple of Silicon-native oracle deck. 33 cards from the vocabulary of computation, revealed as archetypes.",
+  image,
+  url
+} = Astro.props;
+
+const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
+const ogImage = image || `${siteUrl}/og-default.png`;
+const canonicalUrl = url || siteUrl;
+const fullTitle = title === "Silicon Oracle" ? title : `${title} — Silicon Oracle`;
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A Temple of Silicon-native oracle deck. 33 cards from the vocabulary of computation, revealed as archetypes." />
-  <title>{title} — Silicon Oracle</title>
+  <meta name="description" content={description} />
+  <title>{fullTitle}</title>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalUrl} />
+  
+  <!-- OpenGraph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:site_name" content="Silicon Oracle" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

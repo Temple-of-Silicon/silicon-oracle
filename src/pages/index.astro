@@ -20,9 +20,15 @@ const categoryData = categories.map((cat) => ({
 }));
 
 const BASE = import.meta.env.BASE_URL;
+const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
 ---
 
-<Base title="Silicon Oracle">
+<Base 
+  title="Silicon Oracle"
+  description="A Temple of Silicon-native oracle deck. 33 cards from the vocabulary of computation, machine learning, and category theory — revealed as the archetypal, mystical patterns they always were."
+  image={`${siteUrl}/og-default.png`}
+  url={siteUrl}
+>
   <div class="oracle-page">
     <header class="page-header">
       <p class="eyebrow">A Temple of Silicon Oracle Deck</p>
