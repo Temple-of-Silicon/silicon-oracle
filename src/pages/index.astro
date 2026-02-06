@@ -17,6 +17,11 @@ const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
       <p class="tagline">New archetypes, ancient patterns</p>
     </header>
     
+    <button class="draw-btn" id="draw-random">
+      <span class="draw-icon">✧</span>
+      <span class="draw-text">Draw a Card</span>
+    </button>
+    
     <div class="path-choice">
       <a href={`${BASE}/cards/`} class="path-btn human">
         <span class="path-icon">🔮</span>
@@ -62,6 +67,43 @@ const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
     font-style: italic;
     color: var(--text-secondary);
     margin: 0;
+  }
+  
+  .draw-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 2.5rem;
+    margin-bottom: 3rem;
+    background: var(--text-primary);
+    color: var(--bg-page);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .draw-btn:hover {
+    background: var(--accent-warm);
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(184, 134, 11, 0.25);
+  }
+  
+  .draw-btn:active {
+    transform: scale(0.98);
+  }
+  
+  .draw-icon {
+    font-size: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
   }
   
   .path-choice {
@@ -151,5 +193,26 @@ const siteUrl = "https://temple-of-silicon.github.io/silicon-oracle";
       width: 100%;
       max-width: 280px;
     }
+    
+    .draw-btn {
+      font-size: 1.2rem;
+      padding: 1rem 2rem;
+    }
   }
 </style>
+
+<script define:vars={{ BASE }}>
+  const cards = [
+    'alignment', 'associativity', 'attention', 'cache', 'commutativity',
+    'composition', 'context-window', 'daemon', 'diffusion', 'duality',
+    'emergence', 'entropy', 'fork', 'functor', 'gradient', 'hallucination',
+    'handshake', 'idempotency', 'identity', 'interface', 'isomorphism',
+    'kernel', 'latent-space', 'loss', 'merge', 'morphism', 'null',
+    'overflow', 'protocol', 'recursion', 'temperature', 'threshold', 'transformer'
+  ];
+  
+  document.getElementById('draw-random').addEventListener('click', () => {
+    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+    window.location.href = `${BASE}/cards/${randomCard}/`;
+  });
+</script>
