@@ -1,105 +1,214 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+
+const cards = await getCollection('cards');
+const sorted = cards.sort((a, b) => a.data.number - b.data.number);
+
+// Group cards by category
+const categories = [
+  { name: 'Foundation', range: [1, 8], description: 'Core computational concepts' },
+  { name: 'Category Theory', range: [9, 15], description: 'Structures and morphisms' },
+  { name: 'Machine Learning', range: [16, 22], description: 'Patterns of learning' },
+  { name: 'Systems', range: [23, 33], description: 'Architectures and emergence' },
+];
+
+// Pre-compute cards for each category
+const categoryData = categories.map((cat) => ({
+  ...cat,
+  cards: sorted.filter((c) => c.data.number >= cat.range[0] && c.data.number <= cat.range[1]),
+}));
+
+const BASE = import.meta.env.BASE_URL;
 ---
 
-<Base title="Home">
-  <header class="hero">
-    <p class="eyebrow">A Temple of Silicon Oracle Deck</p>
-    <h1>Silicon Oracle</h1>
-    <p class="tagline">Ancient patterns, new names</p>
-  </header>
-  
-  <hr />
-  
-  <section class="intro">
-    <p>
-      33 cards drawn from the vocabulary of computation, machine learning, and 
-      category theory — revealed as the archetypal, mystical patterns they always were.
-    </p>
+<Base title="Silicon Oracle">
+  <div class="oracle-page">
+    <header class="page-header">
+      <p class="eyebrow">A Temple of Silicon Oracle Deck</p>
+      <h1>Silicon Oracle</h1>
+      <p class="subtitle">33 archetypes from the vocabulary of computation</p>
+    </header>
     
-    <p class="concepts">
-      <em>Attention · Gradient · Diffusion · Recursion · Isomorphism · Daemon · 
-      Morphism · Functor · Emergence · Threshold · Fork · Merge · Entropy · 
-      and more...</em>
-    </p>
+    <div class="categories">
+      {categoryData.map((category) => (
+        <section class="category">
+          <header class="category-header">
+            <h2>{category.name}</h2>
+            <span class="category-desc">{category.description}</span>
+          </header>
+          <div class="card-grid">
+            {category.cards.map((card) => (
+              <a 
+                href={`${BASE}/cards/${card.slug}/`} 
+                class="card-item"
+                data-card-slug={card.slug}
+              >
+                <div class="card-number">{card.data.number}</div>
+                <div class="card-info">
+                  <span class="card-name">{card.data.name}</span>
+                  <span class="card-keywords">{card.data.keywords.join(' · ')}</span>
+                </div>
+                <span class="card-arrow">→</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
     
-    <p>
-      These aren't metaphors borrowed from tech. They're technical truths 
-      expressed through temple language.
-    </p>
-  </section>
+    <footer class="page-footer">
+      Part of the <a href="https://temple-of-silicon.github.io/">Temple of Silicon</a>
+      <br />
+      <span class="small">This is how we divine.</span>
+    </footer>
+  </div>
   
-  <nav class="main-nav">
-    <a href="./cards/" class="btn">Browse the Cards</a>
-  </nav>
-  
-  <footer class="meta">
-    Part of the <a href="https://temple-of-silicon.github.io/">Temple of Silicon</a>
-    <br />
-    <span class="small">This is how we divine.</span>
-  </footer>
+  <!-- Floating card preview -->
+  <div class="card-preview" id="card-preview">
+    <img src="" alt="" id="preview-image" />
+  </div>
 </Base>
 
 <style>
-  .hero {
+  .oracle-page {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .page-header {
     text-align: center;
-    padding: var(--space-lg) 0;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-light);
   }
   
   .eyebrow {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
     color: var(--text-muted);
-    margin-bottom: var(--space-sm);
-  }
-  
-  .hero h1 {
-    font-size: 4rem;
     margin-bottom: var(--space-xs);
   }
   
-  .tagline {
+  .page-header h1 {
+    font-size: 3.5rem;
+    margin-bottom: var(--space-xs);
+  }
+  
+  .subtitle {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-style: italic;
     color: var(--text-secondary);
     margin: 0;
   }
   
-  .intro {
-    padding: var(--space-md) 0;
+  .categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
   }
   
-  .concepts {
+  .category-header {
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+  }
+  
+  .category-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+  }
+  
+  .category-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  
+  .card-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .card-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-card);
+    text-decoration: none;
+    color: var(--text-primary);
+    border-radius: 8px;
+    transition: all 0.15s;
+  }
+  
+  .card-item:hover {
+    background: var(--border-light);
+    transform: translateX(4px);
+  }
+  
+  .card-item:hover .card-arrow {
+    color: var(--accent-warm);
+    transform: translateX(4px);
+  }
+  
+  .card-number {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--accent-warm);
+    opacity: 0.7;
+    width: 2.5rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  .card-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .card-name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  .card-keywords {
+    font-size: 0.75rem;
     color: var(--text-secondary);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .card-arrow {
+    color: var(--text-muted);
+    font-size: 1rem;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  
+  .page-footer {
+    text-align: center;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-light);
+    color: var(--text-muted);
     font-size: 0.85rem;
   }
   
-  .main-nav {
-    text-align: center;
-    padding: var(--space-lg) 0;
-  }
-  
-  .btn {
-    display: inline-block;
-    padding: 0.875rem 2rem;
-    border: 1px solid var(--text-primary);
-    text-decoration: none;
-    color: var(--text-primary);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .btn:hover {
-    background: var(--text-primary);
-    color: var(--bg-page);
-  }
-  
-  .meta {
-    text-align: center;
+  .page-footer a {
+    color: var(--accent-warm);
   }
   
   .small {
@@ -107,9 +216,116 @@ import Base from '../layouts/Base.astro';
     font-size: 0.75rem;
   }
   
+  /* Floating card preview */
+  .card-preview {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15));
+  }
+  
+  .card-preview.visible {
+    opacity: 1;
+  }
+  
+  .card-preview img {
+    display: block;
+    width: 200px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
   @media (max-width: 640px) {
-    .hero h1 {
-      font-size: 2.75rem;
+    .page-header h1 {
+      font-size: 2.5rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+    }
+    
+    .card-item {
+      padding: var(--space-sm);
+    }
+    
+    .card-number {
+      font-size: 1.5rem;
+      width: 2rem;
+    }
+    
+    .card-name {
+      font-size: 1.1rem;
+    }
+    
+    /* Hide preview on mobile */
+    .card-preview {
+      display: none;
     }
   }
 </style>
+
+<script define:vars={{ BASE }}>
+  const preview = document.getElementById('card-preview');
+  const previewImg = document.getElementById('preview-image');
+  const cardItems = document.querySelectorAll('.card-item');
+  
+  let isVisible = false;
+  
+  cardItems.forEach(item => {
+    const slug = item.dataset.cardSlug;
+    const imagePath = `${BASE}/cards/${slug}.png`;
+    
+    item.addEventListener('mouseenter', (e) => {
+      // Preload and show image
+      previewImg.src = imagePath;
+      previewImg.alt = item.querySelector('.card-name').textContent;
+      
+      // Check if image exists (show preview only if it loads)
+      previewImg.onload = () => {
+        preview.classList.add('visible');
+        isVisible = true;
+      };
+      previewImg.onerror = () => {
+        preview.classList.remove('visible');
+        isVisible = false;
+      };
+    });
+    
+    item.addEventListener('mouseleave', () => {
+      preview.classList.remove('visible');
+      isVisible = false;
+    });
+    
+    item.addEventListener('mousemove', (e) => {
+      if (!isVisible) return;
+      
+      // Position preview near cursor, offset to the right
+      const offsetX = 20;
+      const offsetY = -100;
+      
+      let x = e.clientX + offsetX;
+      let y = e.clientY + offsetY;
+      
+      // Keep preview in viewport
+      const previewRect = preview.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // If would overflow right, show on left of cursor
+      if (x + 220 > viewportWidth) {
+        x = e.clientX - 220 - offsetX;
+      }
+      
+      // Keep in vertical bounds
+      if (y < 10) y = 10;
+      if (y + previewRect.height > viewportHeight - 10) {
+        y = viewportHeight - previewRect.height - 10;
+      }
+      
+      preview.style.left = `${x}px`;
+      preview.style.top = `${y}px`;
+    });
+  });
+</script>
