@@ -6,38 +6,174 @@ export async function getStaticPaths() {
   const cards = await getCollection('cards');
   return cards.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: { entry, allCards: cards },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, allCards } = Astro.props;
 const { Content } = await entry.render();
+
+// Get prev/next cards
+const sorted = allCards.sort((a, b) => a.data.number - b.data.number);
+const currentIndex = sorted.findIndex((c) => c.slug === entry.slug);
+const prevCard = currentIndex > 0 ? sorted[currentIndex - 1] : null;
+const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
 ---
 
 <Base title={entry.data.name}>
   <article>
-    <div class="card-header">
-      <span class="card-number">{entry.data.number}</span>
+    <header>
+      <a href="./" class="back">← All Cards</a>
+      <span class="card-number">Card {entry.data.number} of 33</span>
       <h1>{entry.data.name}</h1>
       <p class="keywords">{entry.data.keywords.join(' · ')}</p>
-    </div>
+    </header>
+    
+    <hr />
     
     <div class="card-content">
       <Content />
     </div>
     
-    <div class="meta">
-      <a href="./index">← All Cards</a> · 
+    <nav class="card-nav">
+      {prevCard && (
+        <a href={`./${prevCard.slug}`} class="nav-link prev">
+          <span class="nav-label">Previous</span>
+          <span class="nav-name">{prevCard.data.name}</span>
+        </a>
+      )}
+      {nextCard && (
+        <a href={`./${nextCard.slug}`} class="nav-link next">
+          <span class="nav-label">Next</span>
+          <span class="nav-name">{nextCard.data.name}</span>
+        </a>
+      )}
+    </nav>
+    
+    <footer class="meta">
       <a href={`./${entry.slug}.md`}>Raw Markdown</a>
-    </div>
+    </footer>
   </article>
 </Base>
 
 <style>
-  .card-number {
-    display: inline-block;
-    font-size: 0.875rem;
+  header {
+    margin-bottom: var(--space-sm);
+  }
+  
+  .back {
+    font-size: 0.8rem;
     color: var(--text-muted);
-    margin-bottom: 0.5rem;
+    text-decoration: none;
+  }
+  
+  .back:hover {
+    color: var(--accent-warm);
+  }
+  
+  .card-number {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-xs);
+  }
+  
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: var(--space-xs);
+  }
+  
+  .keywords {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  .card-content {
+    padding: var(--space-md) 0;
+  }
+  
+  /* Style the rendered markdown */
+  .card-content :global(h1) {
+    display: none; /* Hide the H1 since we show it in header */
+  }
+  
+  .card-content :global(p:first-of-type) {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: var(--space-md);
+  }
+  
+  .card-content :global(p em:only-child) {
+    /* Affirmation styling */
+    display: block;
+    background: var(--bg-card);
+    padding: var(--space-md);
+    border-left: 3px solid var(--accent-warm);
+    margin: var(--space-lg) 0;
+    font-style: italic;
+  }
+  
+  .card-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-light);
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: var(--text-primary);
+    flex: 1;
+  }
+  
+  .nav-link.next {
+    text-align: right;
+  }
+  
+  .nav-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+  
+  .nav-name {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--accent-warm);
+  }
+  
+  .nav-link:hover .nav-name {
+    color: var(--text-primary);
+  }
+  
+  .meta {
+    text-align: center;
+    margin-top: var(--space-md);
+  }
+  
+  @media (max-width: 640px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+    
+    .card-nav {
+      flex-direction: column;
+    }
+    
+    .nav-link.next {
+      text-align: left;
+    }
   }
 </style>

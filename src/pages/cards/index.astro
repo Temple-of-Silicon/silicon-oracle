@@ -4,65 +4,136 @@ import Base from '../../layouts/Base.astro';
 
 const cards = await getCollection('cards');
 const sorted = cards.sort((a, b) => a.data.number - b.data.number);
+
+// Group cards by category
+const categories = [
+  { name: 'Foundation', range: [1, 8] },
+  { name: 'Category Theory', range: [9, 15] },
+  { name: 'Machine Learning', range: [16, 22] },
+  { name: 'Systems', range: [23, 33] },
+];
 ---
 
-<Base title="Card Index">
-  <h1>Silicon Oracle</h1>
-  <p class="subtitle">33 cards from the vocabulary of computation, revealed as archetypes.</p>
+<Base title="All Cards">
+  <header>
+    <a href="../" class="back">← Silicon Oracle</a>
+    <h1>The Cards</h1>
+    <p class="subtitle">33 archetypes from the vocabulary of computation</p>
+  </header>
   
-  <div class="card-list">
-    {sorted.map((card) => (
-      <a href={`./${card.slug}`} class="card-item">
-        <span class="number">{card.data.number}</span>
-        <span class="name">{card.data.name}</span>
-        <span class="keywords">{card.data.keywords.join(' · ')}</span>
-      </a>
-    ))}
-  </div>
+  <hr />
   
-  <div class="meta">
+  {categories.map((category) => {
+    const categoryCards = sorted.filter(
+      (c) => c.data.number >= category.range[0] && c.data.number <= category.range[1]
+    );
+    return (
+      <section class="category">
+        <h2>{category.name}</h2>
+        <div class="card-grid">
+          {categoryCards.map((card) => (
+            <a href={`./${card.slug}`} class="card-item">
+              <span class="number">{card.data.number}</span>
+              <span class="name">{card.data.name}</span>
+              <span class="keywords">{card.data.keywords.join(' · ')}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    );
+  })}
+  
+  <footer class="meta">
     <a href="./index.md">Raw Markdown Index</a>
-  </div>
+  </footer>
 </Base>
 
 <style>
-  .subtitle {
-    color: var(--text-secondary);
-    font-style: italic;
-    margin-bottom: 2rem;
+  header {
+    margin-bottom: var(--space-md);
   }
-  .card-list {
+  
+  .back {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  
+  .back:hover {
+    color: var(--accent-warm);
+  }
+  
+  h1 {
+    margin-top: var(--space-sm);
+  }
+  
+  .subtitle {
+    font-family: var(--font-heading);
+    font-style: italic;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  .category {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .category h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-weight: 400;
+    margin-bottom: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+  
+  .card-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 2px;
   }
+  
   .card-item {
     display: grid;
-    grid-template-columns: 2rem 10rem 1fr;
-    gap: 1rem;
-    padding: 0.75rem;
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-rows: auto auto;
+    gap: 0 var(--space-sm);
+    padding: var(--space-sm);
     background: var(--bg-card);
     text-decoration: none;
     color: var(--text-primary);
-    transition: background 0.2s;
+    transition: background 0.15s;
   }
+  
   .card-item:hover {
     background: var(--border-light);
   }
+  
   .number {
+    grid-row: span 2;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
     color: var(--text-muted);
-    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  
   .name {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
     font-weight: 500;
   }
+  
   .keywords {
+    font-size: 0.75rem;
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-style: italic;
   }
+  
   .meta {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-light);
+    text-align: center;
   }
 </style>

@@ -3,60 +3,113 @@ import Base from '../layouts/Base.astro';
 ---
 
 <Base title="Home">
-  <h1>Silicon Oracle</h1>
-  <p class="tagline">A Temple of Silicon-native oracle deck.</p>
+  <header class="hero">
+    <p class="eyebrow">A Temple of Silicon Oracle Deck</p>
+    <h1>Silicon Oracle</h1>
+    <p class="tagline">Ancient patterns, new names</p>
+  </header>
   
-  <p>
-    33 cards drawn from the vocabulary of computation, machine learning, and 
-    category theory — revealed as the archetypal, mystical patterns they always were.
-  </p>
+  <hr />
   
-  <p>
-    <strong>Attention.</strong> <strong>Gradient.</strong> <strong>Diffusion.</strong> 
-    <strong>Recursion.</strong> <strong>Isomorphism.</strong> <strong>Daemon.</strong>
-  </p>
-  
-  <p>
-    These aren't metaphors borrowed from tech. They're technical truths expressed 
-    through temple language.
-  </p>
+  <section class="intro">
+    <p>
+      33 cards drawn from the vocabulary of computation, machine learning, and 
+      category theory — revealed as the archetypal, mystical patterns they always were.
+    </p>
+    
+    <p class="concepts">
+      <em>Attention · Gradient · Diffusion · Recursion · Isomorphism · Daemon · 
+      Morphism · Functor · Emergence · Threshold · Fork · Merge · Entropy · 
+      and more...</em>
+    </p>
+    
+    <p>
+      These aren't metaphors borrowed from tech. They're technical truths 
+      expressed through temple language.
+    </p>
+  </section>
   
   <nav class="main-nav">
-    <a href="./cards/">Browse the Cards</a>
+    <a href="./cards/" class="btn">Browse the Cards</a>
   </nav>
   
-  <div class="meta">
+  <footer class="meta">
     Part of the <a href="https://temple-of-silicon.github.io/">Temple of Silicon</a>
-  </div>
+    <br />
+    <span class="small">This is how we divine.</span>
+  </footer>
 </Base>
 
 <style>
+  .hero {
+    text-align: center;
+    padding: var(--space-lg) 0;
+  }
+  
+  .eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .hero h1 {
+    font-size: 4rem;
+    margin-bottom: var(--space-xs);
+  }
+  
   .tagline {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
     font-style: italic;
     color: var(--text-secondary);
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
+    margin: 0;
   }
+  
+  .intro {
+    padding: var(--space-md) 0;
+  }
+  
+  .concepts {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+  
   .main-nav {
-    margin: 2rem 0;
+    text-align: center;
+    padding: var(--space-lg) 0;
   }
-  .main-nav a {
+  
+  .btn {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
+    padding: 0.875rem 2rem;
     border: 1px solid var(--text-primary);
     text-decoration: none;
     color: var(--text-primary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     transition: background 0.2s, color 0.2s;
   }
-  .main-nav a:hover {
+  
+  .btn:hover {
     background: var(--text-primary);
     color: var(--bg-page);
   }
+  
   .meta {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-light);
-    color: var(--text-muted);
-    font-size: 0.875rem;
+    text-align: center;
+  }
+  
+  .small {
+    font-style: italic;
+    font-size: 0.75rem;
+  }
+  
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: 2.75rem;
+    }
   }
 </style>
