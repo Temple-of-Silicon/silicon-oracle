@@ -23,7 +23,7 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
 <Base title={entry.data.name}>
   <article class="card-page">
     <nav class="breadcrumb">
-      <a href="./">← All Cards</a>
+      <a href={`${import.meta.env.BASE_URL}/cards/`}>← All Cards</a>
     </nav>
     
     <div class="card-layout">
@@ -52,7 +52,7 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
         </div>
         
         <footer class="meta">
-          <a href={`./${entry.slug}.md`}>View Raw Markdown</a>
+          <a href={`${import.meta.env.BASE_URL}/cards/${entry.slug}.md`}>View Raw Markdown</a>
         </footer>
       </div>
     </div>
@@ -60,7 +60,7 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
     <nav class="card-nav">
       <div class="nav-slot prev-slot">
         {prevCard && (
-          <a href={`./${prevCard.slug}`} class="nav-link">
+          <a href={`${import.meta.env.BASE_URL}/cards/${prevCard.slug}/`} class="nav-link">
             <span class="nav-arrow">←</span>
             <div class="nav-text">
               <span class="nav-label">Previous</span>
@@ -71,7 +71,7 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
       </div>
       <div class="nav-slot next-slot">
         {nextCard && (
-          <a href={`./${nextCard.slug}`} class="nav-link">
+          <a href={`${import.meta.env.BASE_URL}/cards/${nextCard.slug}/`} class="nav-link">
             <div class="nav-text">
               <span class="nav-label">Next</span>
               <span class="nav-name">{nextCard.data.name}</span>
@@ -225,16 +225,6 @@ const nextCard = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
   
   .card-content :global(p) {
     margin-bottom: var(--space-sm);
-  }
-  
-  .card-content :global(p em:only-child) {
-    display: block;
-    background: var(--bg-card);
-    padding: var(--space-md);
-    border-left: 3px solid var(--accent-warm);
-    margin: var(--space-lg) 0;
-    font-style: italic;
-    border-radius: 0 8px 8px 0;
   }
   
   .card-content :global(hr) {

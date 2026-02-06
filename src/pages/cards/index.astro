@@ -24,7 +24,7 @@ const categoryData = categories.map((cat) => ({
   <div class="cards-page">
     <header class="page-header">
       <nav class="breadcrumb">
-        <a href="../">← Silicon Oracle</a>
+        <a href={`${import.meta.env.BASE_URL}/`}>← Silicon Oracle</a>
       </nav>
       <h1>The Cards</h1>
       <p class="subtitle">33 archetypes from the vocabulary of computation</p>
@@ -39,7 +39,7 @@ const categoryData = categories.map((cat) => ({
             </header>
             <div class="card-grid">
               {category.cards.map((card) => (
-                <a href={`./${card.slug}`} class="card-item">
+                <a href={`${import.meta.env.BASE_URL}/cards/${card.slug}/`} class="card-item">
                   <div class="card-number">{card.data.number}</div>
                   <div class="card-info">
                     <span class="card-name">{card.data.name}</span>
@@ -54,7 +54,7 @@ const categoryData = categories.map((cat) => ({
     </div>
     
     <footer class="page-footer">
-      <a href="./index.md">View Raw Markdown Index</a>
+      <a href={`${import.meta.env.BASE_URL}/cards/index.md`}>View Raw Markdown Index</a>
     </footer>
   </div>
 </Base>
